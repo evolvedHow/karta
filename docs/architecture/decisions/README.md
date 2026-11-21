@@ -3,14 +3,19 @@
 Records in this directory follow the plan set out in §28 of the architecture
 specification. An ADR is written when the decision is taken, not before.
 
+## Authored from the specification
+
+| ADR | Subject | Status |
+|---|---|---|
+| [ADR-001](ADR-001-pi-sdk-integration-boundary.md) | Pi SDK integration boundary | Accepted |
+| [ADR-002](ADR-002-marga-gateway-boundary.md) | Marga as context/policy/model gateway | Accepted |
+| [ADR-003](ADR-003-litellm-adapter-scope.md) | Optional LiteLLM adapter and routing ownership | Accepted, implementation deferred |
+| [ADR-004](ADR-004-openlit-instrumentation.md) | OpenLIT and OpenTelemetry instrumentation | Accepted |
+
 ## Planned by the specification — not yet authored
 
 | ADR | Subject | Expected milestone |
 |---|---|---|
-| ADR-001 | Pi SDK integration boundary | 0 |
-| ADR-002 | Marga as context/policy/model gateway | 0–1 |
-| ADR-003 | Optional LiteLLM adapter and routing ownership | 1–2 |
-| ADR-004 | OpenLIT and OpenTelemetry instrumentation | 0–5 |
 | ADR-005 | Python control plane / TypeScript runtime split | 1 |
 | ADR-006 | Docker sandbox isolation model | 4 |
 | ADR-007 | PostgreSQL tenant isolation and RLS | 7 |

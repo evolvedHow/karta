@@ -7,8 +7,10 @@ orchestration.
 Pi executes. Marga supplies context, policy and model routing. OpenLIT observes.
 The control plane governs identity, tasks, permissions, budgets and tenants.
 
-**Status: scaffold only. Milestone 0 has not started.** There is no application
-code, no pinned dependency set and no Compose deployment in this repository yet.
+**Status: Milestone 0 spike complete.** Dependency versions are pinned and the
+Pi → Marga → model path has been verified with streaming, tool calling and
+trace correlation. No platform application code or Compose deployment exists
+yet. Licensed under MIT; see `LICENSE`.
 
 ## Naming
 
@@ -34,6 +36,8 @@ it says "Agent OS", read "kartā". See `requirements/adoption.md`.
   must survive via an event consumer (ADR-012).
 - `docs/architecture/decisions/` — architecture decision records.
 - `docs/architecture/open-questions.md` — inputs required from the maintainer.
+- `docs/architecture/dependency-pins.md` — exact Milestone 0 versions and hashes.
+- `docs/architecture/milestone-0-spike-results.md` — verified spike evidence.
 
 ## Repository map
 
@@ -46,6 +50,7 @@ context-profiles/ versioned context packages
 infrastructure/  docker, compose, postgres, redis, openlit, litellm, monitoring
 migrations/      database migrations
 tests/           unit, integration, security, tenant-isolation, evaluations, e2e
+spikes/          pinned, isolated compatibility experiments (Milestone 0)
 docs/            architecture, api, deployment, security, development
 requirements/    adopted specifications
 ```
@@ -61,11 +66,12 @@ calling and trace correlation demonstrated. The three investigation documents
 required by §27 are in `docs/architecture/`:
 
 - `current-state-marga.md` — inventory completed against the local checkout.
-- `pi-compatibility-spike.md` — procedure, not yet executed.
-- `openlit-instrumentation-spike.md` — procedure, not yet executed.
+- `pi-compatibility-spike.md` — procedure, executed.
+- `openlit-instrumentation-spike.md` — procedure, executed.
 
-Do not begin the web UI or multi-tenant implementation until the spike exit
-criteria are met.
+The exit criteria are met; see `docs/architecture/milestone-0-spike-results.md`.
+Do not begin the web UI or multi-tenant implementation beyond Milestone 1 until
+the remaining maintainer inputs are resolved.
 
 ## Related repositories
 
