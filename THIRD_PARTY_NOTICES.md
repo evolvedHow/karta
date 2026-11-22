@@ -50,8 +50,8 @@ resolved versions are in the committed `uv.lock` and `package-lock.json`.
 
 - PostgreSQL, Redis and container base images
 - React, Vite, Tailwind CSS and other frontend dependencies
-- LiteLLM (approved in scope; version not yet pinned)
-- The Marga-owned LiteLLM adapter (not yet implemented)
+- LiteLLM is not a kartā dependency. Any LiteLLM use belongs to Marga and is
+  recorded in that repository's notices, not here. See ADR-003.
 
 No licence claim is made for these components until their pinned versions have
 been inspected.

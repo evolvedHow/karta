@@ -82,8 +82,8 @@ criterion. Unit tests are available with `uv run pytest -q` and
    answered arithmetic in prose even with a forced tool choice. The mock
    provider proves the Pi loop and gateway path; a hosted or tool-tuned model
    must be verified before Milestone 1 claims tool support with llama.cpp.
-6. **LiteLLM is approved** but is not implemented or pinned in this milestone.
-   It belongs behind a Marga adapter, with Marga remaining the policy authority.
+6. **LiteLLM is out of scope for kartā.** It is a Marga concern; kartā
+   integrates only with Marga's OpenAI-compatible surface (ADR-003).
 7. **Bangtag and original margAI compatibility remain deferred** by the
    maintainer. No JSONL emitter was added to the platform or Pi runtime.
 

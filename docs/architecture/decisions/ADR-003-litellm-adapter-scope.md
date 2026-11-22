@@ -1,24 +1,28 @@
-# ADR-003: Optional LiteLLM adapter and routing ownership
+# ADR-003: LiteLLM belongs to Marga, not kartā
 
-Status: Accepted by maintainer decision; implementation deferred.
+Status: Accepted by maintainer decision; kartā has no LiteLLM work item.
 
 ## Context
 
-Section 1.2 of the architecture specification names LiteLLM as optional. Two
-components making independent model decisions would produce conflicting
-routing, cost and policy outcomes.
+Section 1.2 of the architecture specification names LiteLLM as optional. The
+maintainer confirmed that LiteLLM is a Marga concern: Marga owns provider
+adapters and routing policy, while kartā consumes Marga's documented
+OpenAI-compatible surface. Two components making independent model decisions
+would produce conflicting routing, cost and policy outcomes.
 
 ## Decision
 
-- LiteLLM is in scope and may be used behind a Marga adapter.
-- Marga remains the only policy and routing authority. LiteLLM is a provider
-  integration beneath it, not a second router.
-- No LiteLLM version is pinned in Milestone 0 and no LiteLLM code is included in
-  the spike. A version is pinned when the adapter is implemented.
+- kartā does not implement, configure, pin or test a LiteLLM adapter.
+- Any LiteLLM use stays inside Marga, which remains the sole policy and routing
+  authority. kartā integrates only with Marga.
+- The Pi runtime reaches providers through Marga's OpenAI-compatible HTTP
+  surface. Provider changes are made in Marga, not in kartā.
+- No LiteLLM dependency is added to any kartā package or container image.
 
 ## Consequences
 
-- Provider coverage can be extended without changing the Pi boundary.
-- Tests must assert that Marga's decision is authoritative whenever LiteLLM is
-  configured.
-- `THIRD_PARTY_NOTICES.md` gains the LiteLLM licence entry at pin time.
+- Provider coverage can change in Marga without a kartā release.
+- Tests at the kartā boundary assert that requests and trace headers reach
+  Marga; they do not assert which upstream provider Marga selected.
+- Marga upstream remains responsible for LiteLLM licensing and notices. This
+  repository makes no LiteLLM licence claim and lists no LiteLLM pin.

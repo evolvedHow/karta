@@ -9,7 +9,7 @@ specification. An ADR is written when the decision is taken, not before.
 |---|---|---|
 | [ADR-001](ADR-001-pi-sdk-integration-boundary.md) | Pi SDK integration boundary | Accepted |
 | [ADR-002](ADR-002-marga-gateway-boundary.md) | Marga as context/policy/model gateway | Accepted |
-| [ADR-003](ADR-003-litellm-adapter-scope.md) | Optional LiteLLM adapter and routing ownership | Accepted, implementation deferred |
+| [ADR-003](ADR-003-litellm-adapter-scope.md) | LiteLLM belongs to Marga, not kartā | Accepted |
 | [ADR-004](ADR-004-openlit-instrumentation.md) | OpenLIT and OpenTelemetry instrumentation | Accepted |
 
 ## Planned by the specification — not yet authored
