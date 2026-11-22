@@ -1,0 +1,10 @@
+tools:
+  - name: read_file
+    scope: workspace
+    access: read
+  - name: write_file
+    scope: workspace
+    access: write
+  - name: list_files
+    scope: workspace
+    access: read

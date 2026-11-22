@@ -7,10 +7,11 @@ orchestration.
 Pi executes. Marga supplies context, policy and model routing. OpenLIT observes.
 The control plane governs identity, tasks, permissions, budgets and tenants.
 
-**Status: Milestone 0 spike complete.** Dependency versions are pinned and the
-Pi → Marga → model path has been verified with streaming, tool calling and
-trace correlation. No platform application code or Compose deployment exists
-yet. Licensed under MIT; see `LICENSE`.
+**Status: Milestone 1 complete.** The Python control plane, TypeScript Pi
+runtime, local Compose profile, tenant-scoped task API and basic coding profile
+are implemented and tested. A CLI/API request runs a coding task against a
+local test repository. See `docs/development/milestone-1.md` for the milestone
+report and reproduction steps. Licensed under MIT; see `LICENSE`.
 
 ## Naming
 
@@ -36,42 +37,68 @@ it says "Agent OS", read "kartā". See `requirements/adoption.md`.
   must survive via an event consumer (ADR-012).
 - `docs/architecture/decisions/` — architecture decision records.
 - `docs/architecture/open-questions.md` — inputs required from the maintainer.
-- `docs/architecture/dependency-pins.md` — exact Milestone 0 versions and hashes.
+- `docs/architecture/dependency-pins.md` — exact pinned versions and hashes.
 - `docs/architecture/milestone-0-spike-results.md` — verified spike evidence.
+- `docs/api/http-api.md` — control-plane and internal runtime HTTP contracts.
+- `docs/api/events.md` — normalized `AgentEvent` schema and replay rules.
+- `docs/development/milestone-1.md` — Milestone 1 report and reproduction steps.
 
 ## Repository map
 
 ```text
-apps/            web (React), api (FastAPI), runtime (Pi/TypeScript), cli, worker
-services/marga   integration surface for the separately versioned Marga service
-packages/        shared contracts and platform modules named in §24 of the spec
-agent-profiles/  declarative, versioned agent profiles
-context-profiles/ versioned context packages
-infrastructure/  docker, compose, postgres, redis, openlit, litellm, monitoring
-migrations/      database migrations
-tests/           unit, integration, security, tenant-isolation, evaluations, e2e
-spikes/          pinned, isolated compatibility experiments (Milestone 0)
-docs/            architecture, api, deployment, security, development
-requirements/    adopted specifications
+apps/runtime/          TypeScript Pi runtime adapter and HTTP service
+packages/karta/        Python control plane: API, worker, CLI, persistence
+agent-profiles/        declarative, versioned agent profiles
+infrastructure/docker/ pinned Dockerfiles for the API and runtime images
+compose*.yaml          local, dev, server and GPU overlay profiles
+migrations/versions/   initial tenant-scoped SQL schema
+tests/                 unit, integration, security, tenant-isolation, e2e
+spikes/                pinned compatibility experiment (Milestone 0)
+docs/                  architecture, api, deployment, security, development
+requirements/          adopted specifications
 ```
 
 Empty directories carry `.gitkeep`. They mark planned boundaries, not
 implemented components.
 
+## Quick start (Milestone 1)
+
+Copy the template and fill in local tokens and a database password (never
+commit real values):
+
+```sh
+cp .env.example .env
+uv sync --frozen
+cd apps/runtime && npm ci && cd ../..
+docker compose -f compose.yaml -f compose.local.yaml up --build -d
+uv run karta status
+uv run karta project create test-repo --workspace /path/to/local/repo
+uv run karta task run "Add a note to the repository" --project test-repo --json
+```
+
+The API binds `127.0.0.1:8100`, the runtime `127.0.0.1:8101`. Marga is a
+separately versioned external service and is not started by this Compose
+profile; kartā calls its OpenAI-compatible endpoint only.
+
+A fully reproducible verification that needs no external model is available:
+
+```sh
+uv run python tests/e2e/verify_milestone_1.py
+```
+
 ## Current milestone
 
-**Milestone 0 — repository and compatibility spike.** Exit criteria, from the
-spec: a minimal Pi → Marga → model call works end to end with streaming, tool
-calling and trace correlation demonstrated. The three investigation documents
-required by §27 are in `docs/architecture/`:
+**Milestone 1 — control plane and runtime foundation.** Exit criteria, from the
+spec: a CLI/API request runs a coding task against a local test repository.
+The CLI creates a durable task, a worker sends it to the TypeScript Pi runtime
+over the documented HTTP contract, Pi calls workspace-scoped tools through
+Marga, and ordered events plus the final result are persisted tenant-scoped.
+The verification above exercises the real API, CLI and Pi runtime with a mock
+Marga; see `docs/development/milestone-1.md` for results and known gaps.
 
-- `current-state-marga.md` — inventory completed against the local checkout.
-- `pi-compatibility-spike.md` — procedure, executed.
-- `openlit-instrumentation-spike.md` — procedure, executed.
-
-The exit criteria are met; see `docs/architecture/milestone-0-spike-results.md`.
-Do not begin the web UI or multi-tenant implementation beyond Milestone 1 until
-the remaining maintainer inputs are resolved.
+Do not begin the web UI, full tenancy, sandbox or billing work ahead of their
+milestones. Remaining maintainer inputs are tracked in
+`docs/architecture/open-questions.md`.
 
 ## Related repositories
 

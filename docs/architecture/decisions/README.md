@@ -11,12 +11,12 @@ specification. An ADR is written when the decision is taken, not before.
 | [ADR-002](ADR-002-marga-gateway-boundary.md) | Marga as context/policy/model gateway | Accepted |
 | [ADR-003](ADR-003-litellm-adapter-scope.md) | LiteLLM belongs to Marga, not kartā | Accepted |
 | [ADR-004](ADR-004-openlit-instrumentation.md) | OpenLIT and OpenTelemetry instrumentation | Accepted |
+| [ADR-005](ADR-005-control-plane-runtime-split.md) | Python control plane / TypeScript runtime split | Accepted |
 
 ## Planned by the specification — not yet authored
 
 | ADR | Subject | Expected milestone |
 |---|---|---|
-| ADR-005 | Python control plane / TypeScript runtime split | 1 |
 | ADR-006 | Docker sandbox isolation model | 4 |
 | ADR-007 | PostgreSQL tenant isolation and RLS | 7 |
 | ADR-008 | Task/event durability and recovery | 3 |

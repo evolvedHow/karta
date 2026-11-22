@@ -1,0 +1,15 @@
+name: karta
+
+# Server overlay. Authentication is mandatory; the worker remains a separate
+# process. Use together with compose.yaml and a server-specific .env.
+services:
+  api:
+    environment:
+      KARTA_ENV: server
+      KARTA_EMBED_WORKER: "0"
+  runtime:
+    environment:
+      KARTA_ENV: server
+  worker:
+    environment:
+      KARTA_ENV: server

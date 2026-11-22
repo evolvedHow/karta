@@ -1,0 +1,5 @@
+permissions:
+  workspace_access: read_write
+  external_network: restricted
+  git_push: approval
+  production_deploy: approval

@@ -1,7 +1,9 @@
-# Milestone 0 dependency pins
+# Dependency pins
 
 Versions were selected from upstream metadata on 2026-11-21, then verified
-against the published package artifacts. They are not floating tags.
+against the published package artifacts. They are not floating tags. Milestone 0
+pins record the compatibility spike; Milestone 1 pins add the platform runtime
+and deployment foundation.
 
 ## Pi runtime
 
@@ -51,3 +53,51 @@ reset or commit that tree.
 - Version: `0.2.0`
 - The maintainer deferred bangtag work, so no bangtag/context-profile behaviour
   is exercised in this milestone.
+
+## Milestone 1 platform pins
+
+The control plane uses exact versions in `pyproject.toml` resolved through
+`uv.lock`. Runtime tooling is exact in `apps/runtime/package.json` with a
+committed `package-lock.json`. No `latest` tag is used anywhere.
+
+### Python control plane
+
+| Package | Version |
+|---|---|
+| fastapi | 0.165.0 |
+| uvicorn | 0.54.0 |
+| pydantic | 2.14.4 |
+| sqlalchemy | 2.1.9 |
+| psycopg | 3.3.9 |
+| redis | 8.1.0 |
+| httpx | 0.28.1 |
+| pyyaml | 6.0.4 |
+| click | 8.5.1 |
+| pytest (dev) | 9.2.0 |
+| ruff (dev) | 0.17.6 |
+| hatchling (build backend) | 1.28.0 |
+
+### TypeScript runtime tooling
+
+| Package | Version |
+|---|---|
+| typescript | 5.9.3 |
+| tsx | 4.23.15 |
+| @types/node | 22.19.19 |
+| @earendil-works/pi-agent-core | 1.6.0 |
+| @earendil-works/pi-ai | 1.6.0 |
+
+### Container images
+
+| Image | Version | Verified |
+|---|---|---|
+| postgres | 17.6-alpine | manifest inspected |
+| redis | 8.0.3-alpine | manifest inspected |
+| python | 3.12.12-slim | manifest inspected |
+| node | 22.19.0-alpine | manifest inspected |
+| ghcr.io/astral-sh/uv | 0.10.7 | manifest inspected |
+
+All Compose services use `network_mode: host` and bind only `127.0.0.1`.
+Ports are `8100` (API), `8101` (runtime), `55432` (PostgreSQL) and `56379`
+(Redis). Marga remains on its existing `8010` listener and is not started by
+the kartā Compose profile.

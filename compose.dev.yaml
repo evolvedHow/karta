@@ -1,0 +1,16 @@
+name: karta
+
+# Developer overlay. The API also embeds a worker loop for single-process runs.
+# Use together with compose.yaml:
+#   docker compose -f compose.yaml -f compose.dev.yaml up --build
+services:
+  api:
+    environment:
+      KARTA_ENV: dev
+      KARTA_EMBED_WORKER: "1"
+  runtime:
+    environment:
+      KARTA_ENV: dev
+  worker:
+    environment:
+      KARTA_ENV: dev

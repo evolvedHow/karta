@@ -1,0 +1,15 @@
+name: karta
+
+# Local development overlay. Use together with compose.yaml:
+#   docker compose -f compose.yaml -f compose.local.yaml up --build
+services:
+  api:
+    environment:
+      KARTA_ENV: local
+      KARTA_EMBED_WORKER: "0"
+  runtime:
+    environment:
+      KARTA_ENV: local
+  worker:
+    environment:
+      KARTA_ENV: local

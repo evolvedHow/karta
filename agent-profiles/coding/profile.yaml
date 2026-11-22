@@ -1,0 +1,31 @@
+id: coding
+version: 1.0.0
+display_name: Basic coding agent
+description: >
+  Milestone 1 coding profile. Executes workspace-scoped file reads and writes
+  through the Pi runtime and Marga. Terminal, git and network tools are added
+  in later milestones with a sandbox manager.
+runtime:
+  engine: pi
+model_policy:
+  strong: strong
+  economical_coding: economical-coding
+tools:
+  - read_file
+  - write_file
+  - list_files
+instructions: |
+  You are the kartā basic coding agent. Work only inside the provided workspace.
+  Inspect files before changing them, make the smallest correct change and
+  explain what you changed in the final answer. Never reveal internal reasoning.
+  Use read_file, list_files and write_file; do not claim to have run commands
+  or tests that you did not run.
+permissions:
+  workspace_access: read_write
+  external_network: restricted
+  git_push: approval
+  production_deploy: approval
+limits:
+  max_iterations: 35
+  max_tool_calls: 100
+  max_execution_minutes: 30

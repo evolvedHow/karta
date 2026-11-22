@@ -1,0 +1,5 @@
+name: karta
+
+# GPU passthrough belongs to Marga's model deployment, not to the kartā
+# control plane or the Pi runtime, which perform no inference. This overlay is
+# intentionally empty; no floating CUDA images are introduced here.

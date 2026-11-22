@@ -1,0 +1,125 @@
+name: karta
+
+# Local foundation profile. All services bind 127.0.0.1 only. Marga is a
+# separately versioned service (ADR-002) and is not started or modified here.
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    container_name: karta-postgres
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: karta
+      POSTGRES_PASSWORD: ${KARTA_POSTGRES_PASSWORD:?KARTA_POSTGRES_PASSWORD must be set in .env}
+      POSTGRES_DB: karta
+    command:
+      - "-c"
+      - "listen_addresses=127.0.0.1"
+      - "-p"
+      - "55432"
+    volumes:
+      - karta-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 55432 -U karta"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    image: redis:8.0.3-alpine
+    container_name: karta-redis
+    network_mode: host
+    restart: unless-stopped
+    command:
+      - "redis-server"
+      - "--bind"
+      - "127.0.0.1"
+      - "--port"
+      - "56379"
+      - "--save"
+      - "60"
+      - "1"
+    volumes:
+      - karta-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "-p", "56379", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  runtime:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/runtime.Dockerfile
+    image: karta-runtime:0.1.0
+    container_name: karta-runtime
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      KARTA_INTERNAL_TOKEN: ${KARTA_INTERNAL_TOKEN:?KARTA_INTERNAL_TOKEN must be set in .env}
+      KARTA_RUNTIME_PORT: "8101"
+      KARTA_MARGA_URL: ${KARTA_MARGA_URL:-http://127.0.0.1:8010/v1}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    image: karta-api:0.1.0
+    container_name: karta-api
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      KARTA_DATABASE_URL: postgresql+psycopg://karta:${KARTA_POSTGRES_PASSWORD:?KARTA_POSTGRES_PASSWORD must be set in .env}@127.0.0.1:55432/karta
+      KARTA_REDIS_URL: redis://127.0.0.1:56379/0
+      KARTA_MARGA_URL: ${KARTA_MARGA_URL:-http://127.0.0.1:8010/v1}
+      KARTA_RUNTIME_URL: http://127.0.0.1:8101
+      KARTA_API_TOKEN: ${KARTA_API_TOKEN:?KARTA_API_TOKEN must be set in .env}
+      KARTA_INTERNAL_TOKEN: ${KARTA_INTERNAL_TOKEN:?KARTA_INTERNAL_TOKEN must be set in .env}
+      KARTA_TENANT_ID: ${KARTA_TENANT_ID:-local}
+      KARTA_QUEUE_BACKEND: redis
+      KARTA_EMBED_WORKER: "0"
+      KARTA_PROJECTS_ROOT: /var/lib/karta/projects
+      KARTA_PROFILES_ROOT: /app/agent-profiles
+    volumes:
+      - ${KARTA_PROJECTS_ROOT:-./.local/projects}:/var/lib/karta/projects
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      runtime:
+        condition: service_healthy
+
+  worker:
+    image: karta-api:0.1.0
+    container_name: karta-worker
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      KARTA_DATABASE_URL: postgresql+psycopg://karta:${KARTA_POSTGRES_PASSWORD:?KARTA_POSTGRES_PASSWORD must be set in .env}@127.0.0.1:55432/karta
+      KARTA_REDIS_URL: redis://127.0.0.1:56379/0
+      KARTA_RUNTIME_URL: http://127.0.0.1:8101
+      KARTA_API_TOKEN: ${KARTA_API_TOKEN:?KARTA_API_TOKEN must be set in .env}
+      KARTA_INTERNAL_TOKEN: ${KARTA_INTERNAL_TOKEN:?KARTA_INTERNAL_TOKEN must be set in .env}
+      KARTA_TENANT_ID: ${KARTA_TENANT_ID:-local}
+      KARTA_QUEUE_BACKEND: redis
+      KARTA_PROJECTS_ROOT: /var/lib/karta/projects
+      KARTA_PROFILES_ROOT: /app/agent-profiles
+    volumes:
+      - ${KARTA_PROJECTS_ROOT:-./.local/projects}:/var/lib/karta/projects
+    command: ["/app/.venv/bin/karta-worker"]
+    depends_on:
+      api:
+        condition: service_healthy
+      runtime:
+        condition: service_healthy
+
+volumes:
+  karta-postgres-data:
+  karta-redis-data:
